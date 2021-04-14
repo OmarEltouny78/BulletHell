@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Player.gd" type="Script" id=1]
+[ext_resource path="res://Redone-Sheet-Sheet.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 2.125, 3.375 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 4.875, 7.875 )
+
+[sub_resource type="CapsuleShape2D" id=3]
+radius = 4.5
+height = 6.5
+
+[sub_resource type="Animation" id=4]
+resource_name = "Punch"
+length = 0.55
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 3 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite/PunchHit/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ true, false, true ]
+}
+
+[node name="KinematicBody2D" type="KinematicBody2D" groups=[
+"Player",
+]]
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( -1, 1 )
+texture = ExtResource( 2 )
+hframes = 5
+
+[node name="PunchHit" type="Area2D" parent="Sprite"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite/PunchHit"]
+position = Vector2( -7.125, 0.375 )
+shape = SubResource( 1 )
+disabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2( 0.25, 1 )
+shape = SubResource( 2 )
+
+[node name="HitBox" type="Area2D" parent="." groups=[
+"HitBox",
+]]
+collision_mask = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox"]
+position = Vector2( 0.375, 1 )
+shape = SubResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Punch = SubResource( 4 )
+[connection signal="area_entered" from="Sprite/PunchHit" to="." method="_on_PunchHit_area_entered"]
